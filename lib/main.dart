@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:pak_destini/story_brain.dart';
+import 'package:local_auth/local_auth.dart';
 
 void main() {
   runApp(PakDestini());
@@ -24,6 +27,29 @@ class StoryPage extends StatefulWidget {
 
 class _StoryPageState extends State<StoryPage> {
   bool isVisible = true;
+  @override
+  // ignore: must_call_super
+  Future<void> initState() async {
+    // TODO: implement initState
+
+    var localAuth = LocalAuthentication();
+    bool didAuthenticate = await localAuth.authenticateWithBiometrics(
+        localizedReason: 'Please authenticate to show account balance');
+
+    List<BiometricType> availableBiometrics =
+        await localAuth.getAvailableBiometrics();
+
+    if (Platform.isIOS) {
+      if (availableBiometrics.contains(BiometricType.face)) {
+        // Face ID.
+        print("face");
+      } else if (availableBiometrics.contains(BiometricType.fingerprint)) {
+        // Touch ID.
+        print("finger");
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
